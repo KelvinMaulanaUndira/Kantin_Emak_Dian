@@ -1,42 +1,54 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex">
-    <div class="w-1/4 bg-white shadow-md p-4">
-        <ul class="space-y-2">
-            <li><a href="{{ route('dashboard') }}" class="block py-2 px-4 hover:bg-gray-200 rounded">Dashboard</a></li>
-            <li><a href="{{ route('categories.index') }}" class="block py-2 px-4 hover:bg-gray-200 rounded">Categories</a></li>
-            <li><a href="{{ route('products.index') }}" class="block py-2 px-4 bg-blue-500 text-white rounded">Products</a></li>
-        </ul>
+<div>
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-4xl font-bold text-gray-900"><i class="fas fa-box text-orange-500 mr-3"></i>Products</h1>
+            <p class="text-gray-600 mt-2">Manage your product catalog</p>
+        </div>
+        <a href="{{ route('products.create') }}" class="btn-primary px-6 py-3 rounded-lg text-white font-semibold"><i class="fas fa-plus mr-2"></i>Add Product</a>
     </div>
-    <div class="w-3/4 p-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-4">Products</h1>
-        <a href="{{ route('products.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 inline-block">Add Product</a>
-        @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">{{ session('success') }}</div>
-        @endif
-        <table class="min-w-full bg-white shadow-md rounded">
-            <thead>
-                <tr class="bg-gray-200">
-                    <th class="py-2 px-4">ID</th>
-                    <th class="py-2 px-4">Name</th>
-                    <th class="py-2 px-4">Category</th>
-                    <th class="py-2 px-4">Price</th>
-                    <th class="py-2 px-4">Photo</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($products as $product)
-                <tr class="border-t">
-                    <td class="py-2 px-4">{{ $product->id }}</td>
-                    <td class="py-2 px-4">{{ $product->name }}</td>
-                    <td class="py-2 px-4">{{ $product->category->name }}</td>
-                    <td class="py-2 px-4">{{ $product->price }}</td>
-                    <td class="py-2 px-4"><img src="{{ asset('storage/' . $product->photo_path) }}" class="w-12 h-12 object-cover rounded"></td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+
+    @if(session('success'))
+        <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-lg">
+            <p class="text-green-700 font-semibold"><i class="fas fa-check-circle mr-2"></i>{{ session('success') }}</p>
+        </div>
+    @endif
+
+    @if($products->isEmpty())
+        <div class="bg-white rounded-xl shadow-lg p-12 text-center">
+            <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">No products yet</h3>
+            <p class="text-gray-500 mb-6">Upload your first product to get started</p>
+            <a href="{{ route('products.create') }}" class="btn-primary px-6 py-3 rounded-lg text-white inline-block"><i class="fas fa-plus mr-2"></i>Add First Product</a>
+        </div>
+    @else
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($products as $product)
+            <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden border-t-4 border-cyan-500">
+                <div class="h-40 bg-gray-200 overflow-hidden">
+                    @if($product->photo_path)
+                        <img src="{{ asset('storage/' . $product->photo_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                    @else
+                        <div class="w-full h-full flex items-center justify-center bg-gray-300">
+                            <i class="fas fa-image text-gray-400 text-4xl"></i>
+                        </div>
+                    @endif
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $product->name }}</h3>
+                    <p class="text-gray-600 text-sm mb-3">{{ Str::limit($product->description, 50) }}</p>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-orange-600 font-bold text-lg">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                            <p class="text-gray-500 text-xs mt-1">{{ $product->category->name }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    @endif
 </div>
 @endsection

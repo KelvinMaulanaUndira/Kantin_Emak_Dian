@@ -1,42 +1,41 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex">
-    <div class="w-1/4 bg-white shadow-md p-4">
-        <ul class="space-y-2">
-            <li><a href="{{ route('dashboard') }}" class="block py-2 px-4 hover:bg-gray-200 rounded">Dashboard</a></li>
-            <li><a href="{{ route('categories.index') }}" class="block py-2 px-4 bg-blue-500 text-white rounded">Categories</a></li>
-            <li><a href="{{ route('products.index') }}" class="block py-2 px-4 hover:bg-gray-200 rounded">Products</a></li>
-        </ul>
+<div>
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-4xl font-bold text-gray-900"><i class="fas fa-list text-orange-500 mr-3"></i>Categories</h1>
+            <p class="text-gray-600 mt-2">Manage your product categories</p>
+        </div>
+        <a href="{{ route('categories.create') }}" class="btn-primary px-6 py-3 rounded-lg text-white font-semibold"><i class="fas fa-plus mr-2"></i>Add Category</a>
     </div>
-    <div class="w-3/4 p-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-4">Categories</h1>
-        <a href="{{ route('categories.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 inline-block">Add Category</a>
-        @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">{{ session('success') }}</div>
-        @endif
-        <table class="min-w-full bg-white shadow-md rounded">
-            <thead>
-                <tr class="bg-gray-200">
-                    <th class="py-2 px-4">ID</th>
-                    <th class="py-2 px-4">Name</th>
-                    <th class="py-2 px-4">Description</th>
-                    <th class="py-2 px-4">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($categories as $category)
-                <tr class="border-t">
-                    <td class="py-2 px-4">{{ $category->id }}</td>
-                    <td class="py-2 px-4">{{ $category->name }}</td>
-                    <td class="py-2 px-4">{{ $category->description }}</td>
-                    <td class="py-2 px-4">
-                        <a href="{{ route('categories.edit', $category) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white py-1 px-3 rounded">Edit</a>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+
+    @if(session('success'))
+        <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-lg">
+            <p class="text-green-700 font-semibold"><i class="fas fa-check-circle mr-2"></i>{{ session('success') }}</p>
+        </div>
+    @endif
+
+    @if($categories->isEmpty())
+        <div class="bg-white rounded-xl shadow-lg p-12 text-center">
+            <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">No categories yet</h3>
+            <p class="text-gray-500 mb-6">Create your first category to get started</p>
+            <a href="{{ route('categories.create') }}" class="btn-primary px-6 py-3 rounded-lg text-white inline-block"><i class="fas fa-plus mr-2"></i>Create First Category</a>
+        </div>
+    @else
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($categories as $category)
+            <div class="card-hover bg-white rounded-xl shadow-lg p-6 border-t-4 border-orange-500">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="text-lg font-bold text-gray-900">{{ $category->name }}</h3>
+                    <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-semibold">{{ $category->products->count() }} items</span>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">{{ $category->description ?? 'No description' }}</p>
+                <a href="{{ route('categories.edit', $category) }}" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition"><i class="fas fa-edit mr-2"></i>Edit</a>
+            </div>
+            @endforeach
+        </div>
+    @endif
 </div>
 @endsection
