@@ -1,4 +1,3 @@
-```html id="psg4096"
 <p align="center">
     <a href="https://logodetimes.com/paris-saint-germain/" target="_blank">
         <img 
